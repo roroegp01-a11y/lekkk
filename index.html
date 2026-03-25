@@ -43,10 +43,18 @@
 
             <!-- Left Column: Input Form -->
             <div class="md:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
-                    <i data-lucide="plus" class="w-5 h-5 text-red-500"></i>
-                    ເພີ່ມລາຍການຂາຍ
-                </h2>
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                        <i data-lucide="plus" class="w-5 h-5 text-red-500"></i>
+                        ເພີ່ມລາຍການຂາຍ
+                    </h2>
+                    <!-- Toolbar ສຳລັບເປີດຕຳລາ -->
+                    <div class="flex gap-2">
+                        <button id="btn-open-animals" class="text-sm bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition-colors">
+                            <i data-lucide="book-open" class="w-4 h-4"></i> ຕຳລາເລກ
+                        </button>
+                    </div>
+                </div>
 
                 <form id="add-form" class="space-y-5">
                     <!-- Customer Name Input -->
@@ -62,9 +70,9 @@
 
                     <!-- Number Input -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">ປ້ອນຕົວເລກ (1-6 ໂຕ)</label>
-                        <input type="text" id="number-input" placeholder="ຕົວຢ່າງ: 89, 456, 1234..."
-                            class="w-full text-3xl tracking-widest p-4 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100 transition-all text-center font-bold text-gray-800"
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">ປ້ອນຕົວເລກ <span class="text-gray-400 font-normal">(ໃຊ້ , ຫຼື ຍະຫວ່າງ ຂັ້ນເພື່ອຊື້ຫຼາຍເລກ)</span></label>
+                        <input type="text" id="number-input" placeholder="ຕົວຢ່າງ: 89, 456, 12, 45"
+                            class="w-full text-2xl tracking-widest p-4 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100 transition-all font-bold text-gray-800"
                             autocomplete="off" />
                     </div>
 
@@ -93,7 +101,7 @@
 
                     <!-- Amount Input -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">ຈຳນວນເງິນ (ກີບ)</label>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">ຈຳນວນເງິນ <span class="text-gray-400 font-normal">(ຕໍ່ 1 ຕົວເລກ)</span></label>
                         <div class="relative">
                             <i data-lucide="coins" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6"></i>
                             <input type="text" id="amount-input" placeholder="0"
@@ -158,16 +166,36 @@
         </div>
     </div>
 
+    <!-- Modal: ຕຳລາເລກນາມມະສັດ -->
+    <div id="animal-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col">
+            <div class="p-4 bg-blue-600 text-white flex justify-between items-center shrink-0">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5"></i> ຕຳລາເລກນາມມະສັດ
+                </h3>
+                <button id="close-animal-btn" class="hover:bg-blue-700 p-1 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-1 bg-gray-50">
+                <p class="text-sm text-gray-500 mb-4">ກົດເລືອກສັດເພື່ອນຳຕົວເລກໄປໃສ່ໃນຊ່ອງປ້ອນເລກອັດຕະໂນມັດ</p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3" id="animal-grid">
+                    <!-- Animal items injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Checkout Modal / Print Preview -->
     <div id="checkout-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
-        <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all">
-            <div class="p-6 text-center border-b border-gray-100 border-dashed">
+        <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all flex flex-col max-h-[90vh]">
+            <div class="p-6 text-center border-b border-gray-100 border-dashed shrink-0">
                 <i data-lucide="check-circle-2" class="w-16 h-16 text-green-500 mx-auto mb-2"></i>
                 <h3 class="text-xl font-bold text-gray-800">ພິມບິນສຳເລັດ!</h3>
                 <p class="text-gray-500 text-sm">ຂອບໃຈທີ່ໃຊ້ບໍລິການ</p>
             </div>
             
-            <div class="p-6 bg-gray-50 font-mono text-sm">
+            <div class="p-6 bg-gray-50 font-mono text-sm overflow-y-auto">
                 <div class="text-center mb-4">
                     <h4 class="font-bold text-lg">ບິນສົ່ງເລກ</h4>
                     <p id="modal-date" class="text-xs text-gray-500"></p>
@@ -184,15 +212,20 @@
                 </div>
             </div>
 
-            <div class="p-4 bg-white flex flex-col gap-2">
+            <div class="p-4 bg-white flex flex-col gap-2 shrink-0">
                 <button id="save-image-btn"
                     class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
                     <i data-lucide="image" class="w-5 h-5"></i>
                     ບັນທຶກເປັນຮູບພາບ
                 </button>
+                <button id="edit-modal-btn"
+                    class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="edit" class="w-5 h-5"></i>
+                    ກັບໄປແກ້ໄຂບິນ
+                </button>
                 <button id="close-modal-btn"
                     class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white font-bold rounded-lg transition-colors">
-                    ສຳເລັດການຂາຍ (ປິດ)
+                    ສຳເລັດການຂາຍ (ລ້າງບິນ)
                 </button>
             </div>
         </div>
@@ -201,7 +234,7 @@
     <!-- Hidden Print Area (Visible only when saving as image) -->
     <div id="print-area" class="hidden w-[350px] mx-auto bg-gray-50 text-gray-800 p-8 font-mono text-sm">
         <div class="text-center mb-6">
-            <h4 class="font-bold text-2xl mb-2 font-sans text-gray-800">ບິນຮັບເງິນ</h4>
+            <h4 class="font-bold text-2xl mb-2 font-sans text-gray-800">ບິນສົ່ງເລກ</h4>
             <p id="print-date" class="text-sm text-gray-500 mb-2"></p>
             <p id="print-customer" class="text-base font-semibold text-gray-800 hidden"></p>
         </div>
@@ -219,6 +252,30 @@
     <script>
         // Initialize Lucide Icons
         lucide.createIcons();
+
+        // Data: ຕຳລາເລກນາມມະສັດ (40 ໂຕ)
+        const animalsData = [
+            { id: 1, name: "ປາເຄິງ", nums: ["01", "41", "81"] }, { id: 2, name: "ຫອຍ", nums: ["02", "42", "82"] },
+            { id: 3, name: "ຫ່ານ", nums: ["03", "43", "83"] }, { id: 4, name: "ນົກຍູງ", nums: ["04", "44", "84"] },
+            { id: 5, name: "ສິງ", nums: ["05", "45", "85"] }, { id: 6, name: "ເສືອ", nums: ["06", "46", "86"] },
+            { id: 7, name: "ໝູ", nums: ["07", "47", "87"] }, { id: 8, name: "ກະຕ່າຍ", nums: ["08", "48", "88"] },
+            { id: 9, name: "ຄວາຍ", nums: ["09", "49", "89"] }, { id: 10, name: "ນາກນ້ຳ", nums: ["10", "50", "90"] },
+            { id: 11, name: "ໝາ", nums: ["11", "51", "91"] }, { id: 12, name: "ມ້າ", nums: ["12", "52", "92"] },
+            { id: 13, name: "ຊ້າງ", nums: ["13", "53", "93"] }, { id: 14, name: "ແມວບ້ານ", nums: ["14", "54", "94"] },
+            { id: 15, name: "ໜູ", nums: ["15", "55", "95"] }, { id: 16, name: "ເຜິ້ງ", nums: ["16", "56", "96"] },
+            { id: 17, name: "ນົກຍາງ", nums: ["17", "57", "97"] }, { id: 18, name: "ແມວປ່າ", nums: ["18", "58", "98"] },
+            { id: 19, name: "ແມງກະເບື້ອ", nums: ["19", "59", "99"] }, { id: 20, name: "ຂີ້ເຂັບ", nums: ["20", "60", "00"] },
+            { id: 21, name: "ນົກແອ່ນ", nums: ["21", "61"] }, { id: 22, name: "ນົກກາງແກ", nums: ["22", "62"] },
+            { id: 23, name: "ລີງ", nums: ["23", "63"] }, { id: 24, name: "ກົບ", nums: ["24", "64"] },
+            { id: 25, name: "ແຫຼວ", nums: ["25", "65"] }, { id: 26, name: "ນາກບິນ", nums: ["26", "66"] },
+            { id: 27, name: "ເຕົ່າ", nums: ["27", "67"] }, { id: 28, name: "ໄກ່", nums: ["28", "68"] },
+            { id: 29, name: "ອ່ຽນ", nums: ["29", "69"] }, { id: 30, name: "ປາໃຫຍ່", nums: ["30", "70"] },
+            { id: 31, name: "ກຸ້ງ", nums: ["31", "71"] }, { id: 32, name: "ງູ", nums: ["32", "72"] },
+            { id: 33, name: "ແມງມຸມ", nums: ["33", "73"] }, { id: 34, name: "ບົ້ງ", nums: ["34", "74"] },
+            { id: 35, name: "ແບ້", nums: ["35", "75"] }, { id: 36, name: "ເຫງັນ", nums: ["36", "76"] },
+            { id: 37, name: "ລິ່ນ", nums: ["37", "77"] }, { id: 38, name: "ໝາໃນ", nums: ["38", "78"] },
+            { id: 39, name: "ປູ", nums: ["39", "79"] }, { id: 40, name: "ນົກອິນຊີ", nums: ["40", "80"] }
+        ];
 
         // State Variables
         let cart = [];
@@ -238,9 +295,16 @@
         const totalAmountEl = document.getElementById('total-amount');
         const checkoutBtn = document.getElementById('checkout-btn');
         
+        // Modals
         const checkoutModal = document.getElementById('checkout-modal');
+        const editModalBtn = document.getElementById('edit-modal-btn');
         const closeModalBtn = document.getElementById('close-modal-btn');
         const saveImageBtn = document.getElementById('save-image-btn');
+
+        const animalModal = document.getElementById('animal-modal');
+        const btnOpenAnimals = document.getElementById('btn-open-animals');
+        const closeAnimalBtn = document.getElementById('close-animal-btn');
+        const animalGrid = document.getElementById('animal-grid');
 
         // Initialize Header Date
         headerDate.textContent = new Date().toLocaleDateString('lo-LA');
@@ -261,10 +325,37 @@
             </button>
         `).join('');
 
+        // Render Animals
+        animalGrid.innerHTML = animalsData.map(animal => `
+            <button type="button" onclick="selectAnimal('${animal.nums.join(', ')}')"
+                class="bg-white border border-gray-200 rounded-xl p-3 hover:border-blue-500 hover:shadow-md transition-all text-center group">
+                <div class="text-sm font-bold text-gray-800 mb-1 group-hover:text-blue-600">${animal.name}</div>
+                <div class="text-xs font-mono text-gray-500">${animal.nums.join(', ')}</div>
+            </button>
+        `).join('');
+
+        // Logic for Animal Select
+        window.selectAnimal = (nums) => {
+            // Append if there's already something, otherwise replace
+            const current = numberInput.value.trim();
+            if (current && !current.endsWith(',')) {
+                numberInput.value = current + ', ' + nums;
+            } else {
+                numberInput.value = current + nums;
+            }
+            animalModal.classList.add('hidden');
+            animalModal.classList.remove('flex');
+            hideError();
+        };
+
+        // Modals Open/Close Events
+        btnOpenAnimals.addEventListener('click', () => { animalModal.classList.remove('hidden'); animalModal.classList.add('flex'); });
+        closeAnimalBtn.addEventListener('click', () => { animalModal.classList.add('hidden'); animalModal.classList.remove('flex'); });
+
         // Input Handlers
         numberInput.addEventListener('input', (e) => {
-            let value = e.target.value.replace(/[^0-9]/g, '');
-            if (value.length > 6) value = value.slice(0, 6);
+            // ອະນຸຍາດໃຫ້ພິມເລກ, ຈຸດ(,), ແລະ ຍະຫວ່າງເທົ່ານັ້ນ
+            let value = e.target.value.replace(/[^0-9,\s]/g, '');
             e.target.value = value;
             hideError();
         });
@@ -283,8 +374,14 @@
         addForm.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            const num = numberInput.value;
+            const rawNum = numberInput.value;
             const amt = parseInt(amountInput.value);
+
+            // ແຍກຕົວເລກດ້ວຍຈຸດ ຫຼື ຍະຫວ່າງ ແລະ ຕັດຕົວທີ່ວ່າງອອກ
+            const numsArray = rawNum.split(/[\s,]+/).filter(n => n.length > 0);
+
+            if (numsArray.length === 0) return showError('ກະລຸນາປ້ອນຕົວເລກກ່ອນ');
+            if (!amt || amt <= 0) return showError('ກະລຸນາປ້ອນຈຳນວນເງິນ');
 
             // Get selected position
             const positionRadios = document.getElementsByName('position');
@@ -296,20 +393,20 @@
                 }
             }
 
-            if (!num) return showError('ກະລຸນາປ້ອນຕົວເລກກ່ອນ');
-            if (num.length < 1) return showError('ຕົວເລກຕ້ອງມີຢ່າງໜ້ອຍ 1 ໂຕ');
-            if (!amt || amt <= 0) return showError('ກະລຸນາປ້ອນຈຳນວນເງິນ');
+            // Loop ບັນທຶກທຸກຕົວເລກລົງໃນ Cart
+            numsArray.forEach(num => {
+                // ຕັດໃຫ້ເຫຼືອແຕ່ 6 ໂຕ ຖ້າພິມເກີນ
+                const cleanNum = num.slice(0, 6);
+                const itemType = selectedPos ? `ເລກ ${cleanNum.length} ໂຕ (${selectedPos})` : `ເລກ ${cleanNum.length} ໂຕ`;
 
-            const itemType = selectedPos ? `ເລກ ${num.length} ໂຕ (${selectedPos})` : `ເລກ ${num.length} ໂຕ`;
-
-            const newItem = {
-                id: Date.now().toString(),
-                number: num,
-                type: itemType,
-                amount: amt
-            };
-
-            cart.unshift(newItem); // Add to top
+                const newItem = {
+                    id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+                    number: cleanNum,
+                    type: itemType,
+                    amount: amt
+                };
+                cart.unshift(newItem); // Add to top
+            });
             
             numberInput.value = '';
             amountInput.value = '';
@@ -387,8 +484,15 @@
             const dateObj = new Date();
             const customerName = customerInput.value.trim();
 
+            // Format Date as DD/MM/YYYY, HH:mm:ss
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
+            const time = dateObj.toLocaleTimeString('en-GB', { hour12: false });
+            const formattedDate = `${day}/${month}/${year}, ${time}`;
+
             // Populate Modal
-            document.getElementById('modal-date').textContent = dateObj.toLocaleString('en-US', { hour12: false });
+            document.getElementById('modal-date').textContent = formattedDate;
             document.getElementById('modal-total').textContent = formatCurrency(totalAmount);
             
             const modalCustomerEl = document.getElementById('modal-customer');
@@ -407,7 +511,7 @@
             `).join('');
 
             // Populate Print Area (For Image Export)
-            document.getElementById('print-date').textContent = dateObj.toLocaleString('en-US', { hour12: false });
+            document.getElementById('print-date').textContent = formattedDate;
             document.getElementById('print-total').textContent = formatCurrency(totalAmount);
             
             const printCustomerEl = document.getElementById('print-customer');
@@ -430,13 +534,19 @@
             checkoutModal.classList.add('flex');
         });
 
+        // Edit Bill (Go back without clearing)
+        editModalBtn.addEventListener('click', () => {
+            checkoutModal.classList.add('hidden');
+            checkoutModal.classList.remove('flex');
+        });
+
         // Close and Clear
         closeModalBtn.addEventListener('click', () => {
             cart = [];
             customerInput.value = '';
             updateCartUI();
             checkoutModal.classList.add('hidden');
-            checkoutModal.classList.remove('flex');F
+            checkoutModal.classList.remove('flex');
         });
 
         // Save as Image Functionality
