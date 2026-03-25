@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ລະບົບຂາຍຫວຍພັດທະນາ (POS)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2canvas ສຳລັບບັນທຶກຮູບພາບ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700;900&display=swap');
+        body {
+            font-family: 'Noto Sans Lao', sans-serif;
+        }
+        /* ເຊື່ອງ Scrollbar ແຕ່ຍັງເລື່ອນໄດ້ */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-800">
+
+    <div class="p-4 md:p-8">
+        <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6" id="main-ui">
+            
+            <!-- Header Section -->
+            <div class="md:col-span-12 flex items-center justify-between bg-red-600 text-white p-4 rounded-xl shadow-md">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="ticket" class="w-8 h-8"></i>
+                    <h1 class="text-2xl font-bold">ລະບົບຂາຍຫວຍພັດທະນາ</h1>
+                </div>
+                <div class="hidden md:flex items-center gap-2 font-medium" id="header-date">
+                    <!-- Date will be injected here -->
+                </div>
+            </div>
+
+            <!-- Left Column: Input Form -->
+            <div class="md:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2 border-b pb-2">
+                    <i data-lucide="plus" class="w-5 h-5 text-red-500"></i>
+                    ເພີ່ມລາຍການຂາຍ
+                </h2>
+
+                <form id="add-form" class="space-y-5">
+                    <!-- Customer Name Input -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">ຊື່ລູກຄ້າ (ບໍ່ບັງຄັບ)</label>
+                        <div class="relative">
+                            <i data-lucide="user" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"></i>
+                            <input type="text" id="customer-input" placeholder="ປ້ອນຊື່ລູກຄ້າ..."
+                                class="w-full text-lg p-3 pl-12 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100 transition-all text-gray-800"
+                                autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <!-- Number Input -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">ປ້ອນຕົວເລກ (1-6 ໂຕ)</label>
+                        <input type="text" id="number-input" placeholder="ຕົວຢ່າງ: 89, 456, 1234..."
+                            class="w-full text-3xl tracking-widest p-4 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100 transition-all text-center font-bold text-gray-800"
+                            autocomplete="off" />
+                    </div>
+
+                    <!-- Position Selection -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">ຕຳແໜ່ງ (ບົນ/ລ່າງ)</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="position" value="" class="peer sr-only" checked />
+                                <div class="text-center py-2 px-1 bg-white text-gray-600 font-semibold rounded-lg border-2 border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-600 transition-all text-sm">ປົກກະຕິ</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="position" value="ບົນ" class="peer sr-only" />
+                                <div class="text-center py-2 px-1 bg-white text-gray-600 font-semibold rounded-lg border-2 border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-600 transition-all text-sm">ບົນ</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="position" value="ລ່າງ" class="peer sr-only" />
+                                <div class="text-center py-2 px-1 bg-white text-gray-600 font-semibold rounded-lg border-2 border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-600 transition-all text-sm">ລ່າງ</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="position" value="ບົນ-ລ່າງ" class="peer sr-only" />
+                                <div class="text-center py-2 px-1 bg-white text-gray-600 font-semibold rounded-lg border-2 border-gray-200 peer-checked:bg-red-50 peer-checked:border-red-500 peer-checked:text-red-600 transition-all text-sm">ບົນ-ລ່າງ</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Amount Input -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">ຈຳນວນເງິນ (ກີບ)</label>
+                        <div class="relative">
+                            <i data-lucide="coins" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6"></i>
+                            <input type="text" id="amount-input" placeholder="0"
+                                class="w-full text-2xl p-3 pl-12 border-2 border-gray-200 rounded-lg focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100 transition-all font-bold text-gray-800"
+                                autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <!-- Quick Amount Buttons -->
+                    <div>
+                        <label class="block text-sm text-gray-500 mb-2">ເລືອກຈຳນວນເງິນດ່ວນ:</label>
+                        <div class="flex flex-wrap gap-2" id="quick-amounts-container">
+                            <!-- Quick amounts will be injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Error Message -->
+                    <p id="error-msg" class="text-red-500 text-sm font-medium hidden"></p>
+
+                    <!-- Submit Button -->
+                    <button type="submit"
+                        class="w-full py-4 bg-red-600 hover:bg-red-700 text-white text-xl font-bold rounded-xl shadow-lg shadow-red-200 transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="plus" class="w-6 h-6"></i>
+                        ເພີ່ມເຂົ້າບິນ
+                    </button>
+                </form>
+            </div>
+
+            <!-- Right Column: Cart / Bill -->
+            <div class="md:col-span-5 bg-white p-0 rounded-xl shadow-sm border border-gray-100 flex flex-col h-[600px] overflow-hidden">
+                <div class="p-4 bg-gray-800 text-white rounded-t-xl flex items-center gap-2">
+                    <i data-lucide="receipt" class="w-5 h-5"></i>
+                    <h2 class="text-lg font-bold">ລາຍການໃນບິນ</h2>
+                    <span id="cart-count" class="ml-auto bg-gray-700 px-3 py-1 rounded-full text-sm">
+                        0 ລາຍການ
+                    </span>
+                </div>
+
+                <!-- Cart Items -->
+                <div class="flex-1 overflow-y-auto p-4 bg-gray-50 no-scrollbar" id="cart-items">
+                    <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                        <i data-lucide="ticket" class="w-16 h-16 mb-2 opacity-20"></i>
+                        <p>ຍັງບໍ່ມີລາຍການຂາຍ</p>
+                    </div>
+                </div>
+
+                <!-- Cart Footer / Checkout -->
+                <div class="p-4 bg-white border-t border-gray-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-gray-600 font-semibold text-lg">ລວມທັງໝົດ:</span>
+                        <span id="total-amount" class="text-3xl font-extrabold text-red-600">
+                            0 ກີບ
+                        </span>
+                    </div>
+                    <button id="checkout-btn" disabled
+                        class="w-full py-4 text-white text-xl font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 bg-gray-300 cursor-not-allowed">
+                        <i data-lucide="printer" class="w-6 h-6"></i>
+                        ພິມບິນ / ຮັບເງິນ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal / Print Preview -->
+    <div id="checkout-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all">
+            <div class="p-6 text-center border-b border-gray-100 border-dashed">
+                <i data-lucide="check-circle-2" class="w-16 h-16 text-green-500 mx-auto mb-2"></i>
+                <h3 class="text-xl font-bold text-gray-800">ພິມບິນສຳເລັດ!</h3>
+                <p class="text-gray-500 text-sm">ຂອບໃຈທີ່ໃຊ້ບໍລິການ</p>
+            </div>
+            
+            <div class="p-6 bg-gray-50 font-mono text-sm">
+                <div class="text-center mb-4">
+                    <h4 class="font-bold text-lg">ບິນສົ່ງເລກ</h4>
+                    <p id="modal-date" class="text-xs text-gray-500"></p>
+                    <p id="modal-customer" class="text-sm font-semibold mt-1 hidden"></p>
+                </div>
+                
+                <div id="modal-items" class="space-y-2 mb-4 border-y border-dashed py-4 border-gray-300">
+                    <!-- Items will be injected here -->
+                </div>
+                
+                <div class="flex justify-between font-bold text-base">
+                    <span>ລວມເງິນ:</span>
+                    <span id="modal-total"></span>
+                </div>
+            </div>
+
+            <div class="p-4 bg-white flex flex-col gap-2">
+                <button id="save-image-btn"
+                    class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="image" class="w-5 h-5"></i>
+                    ບັນທຶກເປັນຮູບພາບ
+                </button>
+                <button id="close-modal-btn"
+                    class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white font-bold rounded-lg transition-colors">
+                    ສຳເລັດການຂາຍ (ປິດ)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Print Area (Visible only when saving as image) -->
+    <div id="print-area" class="hidden w-[350px] mx-auto bg-gray-50 text-gray-800 p-8 font-mono text-sm">
+        <div class="text-center mb-6">
+            <h4 class="font-bold text-2xl mb-2 font-sans text-gray-800">ບິນຮັບເງິນ</h4>
+            <p id="print-date" class="text-sm text-gray-500 mb-2"></p>
+            <p id="print-customer" class="text-base font-semibold text-gray-800 hidden"></p>
+        </div>
+        
+        <div id="print-items" class="space-y-3 mb-6 border-y border-dashed py-5 border-gray-300">
+            <!-- Items will be injected here -->
+        </div>
+        
+        <div class="flex justify-between font-bold text-lg font-sans text-gray-800">
+            <span>ລວມເງິນ:</span>
+            <span id="print-total"></span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // State Variables
+        let cart = [];
+        const quickAmounts = [1000, 2000, 5000, 10000, 20000, 50000];
+
+        // DOM Elements
+        const headerDate = document.getElementById('header-date');
+        const numberInput = document.getElementById('number-input');
+        const amountInput = document.getElementById('amount-input');
+        const customerInput = document.getElementById('customer-input');
+        const addForm = document.getElementById('add-form');
+        const errorMsg = document.getElementById('error-msg');
+        const quickAmountsContainer = document.getElementById('quick-amounts-container');
+        
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCount = document.getElementById('cart-count');
+        const totalAmountEl = document.getElementById('total-amount');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        
+        const checkoutModal = document.getElementById('checkout-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const saveImageBtn = document.getElementById('save-image-btn');
+
+        // Initialize Header Date
+        headerDate.textContent = new Date().toLocaleDateString('lo-LA');
+
+        // Utility: Format Currency
+        const formatCurrency = (amount) => {
+            return new Intl.NumberFormat('lo-LA').format(amount) + ' ກີບ';
+        };
+        const formatNumberOnly = (amount) => {
+            return new Intl.NumberFormat('lo-LA').format(amount);
+        };
+
+        // Render Quick Amount Buttons
+        quickAmountsContainer.innerHTML = quickAmounts.map(amount => `
+            <button type="button" onclick="setQuickAmount(${amount})"
+                class="flex-1 min-w-[80px] py-2 px-3 bg-red-50 hover:bg-red-100 text-red-700 font-semibold rounded-lg border border-red-200 transition-colors">
+                ${formatNumberOnly(amount)}
+            </button>
+        `).join('');
+
+        // Input Handlers
+        numberInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            if (value.length > 6) value = value.slice(0, 6);
+            e.target.value = value;
+            hideError();
+        });
+
+        amountInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            hideError();
+        });
+
+        window.setQuickAmount = (amount) => {
+            amountInput.value = amount;
+            hideError();
+        };
+
+        // Add to Cart
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const num = numberInput.value;
+            const amt = parseInt(amountInput.value);
+
+            // Get selected position
+            const positionRadios = document.getElementsByName('position');
+            let selectedPos = '';
+            for (const radio of positionRadios) {
+                if (radio.checked) {
+                    selectedPos = radio.value;
+                    break;
+                }
+            }
+
+            if (!num) return showError('ກະລຸນາປ້ອນຕົວເລກກ່ອນ');
+            if (num.length < 1) return showError('ຕົວເລກຕ້ອງມີຢ່າງໜ້ອຍ 1 ໂຕ');
+            if (!amt || amt <= 0) return showError('ກະລຸນາປ້ອນຈຳນວນເງິນ');
+
+            const itemType = selectedPos ? `ເລກ ${num.length} ໂຕ (${selectedPos})` : `ເລກ ${num.length} ໂຕ`;
+
+            const newItem = {
+                id: Date.now().toString(),
+                number: num,
+                type: itemType,
+                amount: amt
+            };
+
+            cart.unshift(newItem); // Add to top
+            
+            numberInput.value = '';
+            amountInput.value = '';
+            document.querySelector('input[name="position"][value=""]').checked = true; // reset to default position
+            hideError();
+            
+            updateCartUI();
+        });
+
+        window.removeFromCart = (id) => {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+        };
+
+        const showError = (msg) => {
+            errorMsg.textContent = msg;
+            errorMsg.classList.remove('hidden');
+        };
+
+        const hideError = () => {
+            errorMsg.classList.add('hidden');
+        };
+
+        // Update UI
+        const updateCartUI = () => {
+            const totalAmount = cart.reduce((sum, item) => sum + item.amount, 0);
+            
+            // Update Header/Footer Texts
+            cartCount.textContent = `${cart.length} ລາຍການ`;
+            totalAmountEl.textContent = formatCurrency(totalAmount);
+
+            // Toggle Checkout Button State
+            if (cart.length === 0) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.classList.remove('bg-green-600', 'hover:bg-green-700', 'shadow-green-200');
+                checkoutBtn.classList.add('bg-gray-300', 'cursor-not-allowed');
+                
+                cartItemsContainer.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-2 opacity-20"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
+                        <p>ຍັງບໍ່ມີລາຍການຂາຍ</p>
+                    </div>
+                `;
+            } else {
+                checkoutBtn.disabled = false;
+                checkoutBtn.classList.remove('bg-gray-300', 'cursor-not-allowed');
+                checkoutBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'shadow-green-200');
+
+                cartItemsContainer.innerHTML = `<div class="space-y-3">
+                    ${cart.map(item => `
+                        <div class="bg-white p-3 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between">
+                            <div>
+                                <div class="text-2xl font-bold text-red-600 tracking-wider">${item.number}</div>
+                                <div class="text-xs text-gray-500">${item.type}</div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="text-lg font-bold text-gray-800">
+                                    ${formatCurrency(item.amount)}
+                                </div>
+                                <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors p-2" title="ລົບລາຍການ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+            }
+        };
+
+        // Checkout & Modal Logistics
+        checkoutBtn.addEventListener('click', () => {
+            if (cart.length === 0) return;
+            
+            const totalAmount = cart.reduce((sum, item) => sum + item.amount, 0);
+            const dateObj = new Date();
+            const customerName = customerInput.value.trim();
+
+            // Populate Modal
+            document.getElementById('modal-date').textContent = dateObj.toLocaleString('en-US', { hour12: false });
+            document.getElementById('modal-total').textContent = formatCurrency(totalAmount);
+            
+            const modalCustomerEl = document.getElementById('modal-customer');
+            if (customerName) {
+                modalCustomerEl.textContent = `ລູກຄ້າ: ${customerName}`;
+                modalCustomerEl.classList.remove('hidden');
+            } else {
+                modalCustomerEl.classList.add('hidden');
+            }
+
+            document.getElementById('modal-items').innerHTML = cart.map(item => `
+                <div class="flex justify-between">
+                    <span>${item.number} (${item.type})</span>
+                    <span>${formatNumberOnly(item.amount)}</span>
+                </div>
+            `).join('');
+
+            // Populate Print Area (For Image Export)
+            document.getElementById('print-date').textContent = dateObj.toLocaleString('en-US', { hour12: false });
+            document.getElementById('print-total').textContent = formatCurrency(totalAmount);
+            
+            const printCustomerEl = document.getElementById('print-customer');
+            if (customerName) {
+                printCustomerEl.textContent = `ລູກຄ້າ: ${customerName}`;
+                printCustomerEl.classList.remove('hidden');
+            } else {
+                printCustomerEl.classList.add('hidden');
+            }
+
+            document.getElementById('print-items').innerHTML = cart.map(item => `
+                <div class="flex justify-between text-base">
+                    <span>${item.number} (${item.type})</span>
+                    <span>${formatNumberOnly(item.amount)}</span>
+                </div>
+            `).join('');
+
+            // Show Modal
+            checkoutModal.classList.remove('hidden');
+            checkoutModal.classList.add('flex');
+        });
+
+        // Close and Clear
+        closeModalBtn.addEventListener('click', () => {
+            cart = [];
+            customerInput.value = '';
+            updateCartUI();
+            checkoutModal.classList.add('hidden');
+            checkoutModal.classList.remove('flex');F
+        });
+
+        // Save as Image Functionality
+        saveImageBtn.addEventListener('click', () => {
+            const printArea = document.getElementById('print-area');
+            
+            // Prepare element for HTML2Canvas
+            printArea.classList.remove('hidden');
+            printArea.style.position = 'absolute';
+            printArea.style.left = '-9999px';
+            printArea.style.display = 'block';
+
+            // Change button to loading state
+            const originalBtnHTML = saveImageBtn.innerHTML;
+            saveImageBtn.innerHTML = `<span class="animate-pulse">ກຳລັງສ້າງຮູບພາບ...</span>`;
+            saveImageBtn.disabled = true;
+
+            html2canvas(printArea, { 
+                scale: 3, 
+                backgroundColor: '#ffffff' 
+            }).then(canvas => {
+                // Revert Element state
+                printArea.style.position = '';
+                printArea.style.left = '';
+                printArea.style.display = '';
+                printArea.classList.add('hidden');
+
+                // Create Download Link
+                const link = document.createElement('a');
+                link.download = `bill_${new Date().getTime()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                // Revert button state
+                saveImageBtn.innerHTML = originalBtnHTML;
+                saveImageBtn.disabled = false;
+            }).catch(err => {
+                console.error("Error generating image:", err);
+                alert("ເກີດຂໍ້ຜິດພາດໃນການສ້າງຮູບພາບ");
+                saveImageBtn.innerHTML = originalBtnHTML;
+                saveImageBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
